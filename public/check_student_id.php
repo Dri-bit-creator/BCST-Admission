@@ -19,5 +19,6 @@ if ($stmt->num_rows > 0) {
     echo "available";
 }
 
+
 $stmt->close();
 $conn->close();
