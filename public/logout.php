@@ -18,7 +18,8 @@ if (isset($_SESSION['username'])) {
     $stmt->close();
 }
 
+session_destroy();
 session_unset();
 session_destroy();
-header("Location: /bcst/public/login.php");
+header("Location: index.php");
 exit;

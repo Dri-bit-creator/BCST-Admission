@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $stmt->execute();
                 $stmt->close();
 
-                echo "<script>alert('Registered successfully! You can now log in.'); window.location='login.php';</script>";
+                echo "<script>alert('Registered successfully! You can now log in.'); window.location='index.php';</script>";
                 exit;
             } catch (mysqli_sql_exception $e) {
                 if ((int) $e->getCode() === 1062) {
@@ -376,7 +376,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </form>
 
         <p class="helper">
-          Already registered? <a href="login.php">Login here</a>
+          Already registered? <a href="index.php">Login here</a>
         </p>
       </div>
     </section>

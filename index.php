@@ -1,4 +1,14 @@
 <?php
+// Root redirect: when running locally with XAMPP, serve the public/index.php page.
+// On Vercel, the platform routes `/` to `/public/`, so redirecting to `/` keeps behavior consistent.
+if (getenv('VERCEL')) {
+  header('Location: /');
+} else {
+  header('Location: public/index.php');
+}
+exit;
+
+<?php
 session_start();
 require_once __DIR__ . '/../includes/conn.php';
 
