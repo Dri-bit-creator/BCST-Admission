@@ -9,8 +9,11 @@ CREATE TABLE IF NOT EXISTS `users` (
   `username` VARCHAR(100) NOT NULL,
   `email` VARCHAR(150) NOT NULL UNIQUE,
   `password` VARCHAR(255) NOT NULL,
+  `role` VARCHAR(20) NOT NULL DEFAULT 'user',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `role` VARCHAR(20) NOT NULL DEFAULT 'user' AFTER `password`;
 
 CREATE TABLE IF NOT EXISTS `students` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -48,10 +51,10 @@ CREATE TABLE IF NOT EXISTS `user_log` (
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Insert admin user into bcst_db (password: bcstadmin)
-INSERT INTO `users` (`username`, `email`, `password`) VALUES
-('admin', 'admin@bcst.local', '$2y$10$RE/CB26pnzEIizC7sEBYee9chVUObQ4Mg96btwCuiWvNgR/Qw/ZJS')
-ON DUPLICATE KEY UPDATE `username`=VALUES(`username`), `password`=VALUES(`password`);
+-- Insert admin user into bcst_db (username: admin, password: bcstadmin)
+INSERT INTO `users` (`username`, `email`, `password`, `role`) VALUES
+('admin', 'admin@bcst.local', '$2y$10$0BTLYef3yb/Gu2n/maWqVe.73v7mdtRokyO5fst.POGTMlBMVsN4K', 'admin')
+ON DUPLICATE KEY UPDATE `username`=VALUES(`username`), `password`=VALUES(`password`), `role`=VALUES(`role`);
 
 -- Create enrollment_db (for legacy files that reference this name)
 CREATE DATABASE IF NOT EXISTS `enrollment_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -62,8 +65,11 @@ CREATE TABLE IF NOT EXISTS `users` (
   `username` VARCHAR(100) NOT NULL,
   `email` VARCHAR(150) NOT NULL UNIQUE,
   `password` VARCHAR(255) NOT NULL,
+  `role` VARCHAR(20) NOT NULL DEFAULT 'user',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `role` VARCHAR(20) NOT NULL DEFAULT 'user' AFTER `password`;
 
 CREATE TABLE IF NOT EXISTS `students` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -102,6 +108,6 @@ CREATE TABLE IF NOT EXISTS `user_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Insert admin user into enrollment_db as well
-INSERT INTO `users` (`username`, `email`, `password`) VALUES
-('admin', 'admin@bcst.local', '$2y$10$RE/CB26pnzEIizC7sEBYee9chVUObQ4Mg96btwCuiWvNgR/Qw/ZJS')
-ON DUPLICATE KEY UPDATE `username`=VALUES(`username`), `password`=VALUES(`password`);
+INSERT INTO `users` (`username`, `email`, `password`, `role`) VALUES
+('admin', 'admin@bcst.local', '$2y$10$0BTLYef3yb/Gu2n/maWqVe.73v7mdtRokyO5fst.POGTMlBMVsN4K', 'admin')
+ON DUPLICATE KEY UPDATE `username`=VALUES(`username`), `password`=VALUES(`password`), `role`=VALUES(`role`);

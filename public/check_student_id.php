@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/conn.php';
+require_once __DIR__ . '/../includes/conn.php';
+
 if (!isset($conn) || $conn->connect_error) {
     die("Connection failed");
 }
@@ -20,4 +21,3 @@ if ($stmt->num_rows > 0) {
 
 $stmt->close();
 $conn->close();
-?>

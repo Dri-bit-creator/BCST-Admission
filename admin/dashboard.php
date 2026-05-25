@@ -17,7 +17,11 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) >
 }
 $_SESSION['last_activity'] = time();
 
-require_once __DIR__ . '/../conn.php';
+require_once __DIR__ . '/../includes/conn.php';
+
+function requirementDocumentLink($studentId, $fileColumn) {
+    return 'view_document.php?id=' . urlencode((string) $studentId) . '&file=' . urlencode($fileColumn);
+}
 ?>
 
 <!DOCTYPE html>
@@ -40,6 +44,10 @@ require_once __DIR__ . '/../conn.php';
     .status-approved {
       background-color: #d1fae5;
       color: #2e6f40;
+    }
+    .status-denied {
+      background-color: #fee2e2;
+      color: #991b1b;
     }
     .action-btn {
       transition: all 0.2s ease;
@@ -68,6 +76,8 @@ require_once __DIR__ . '/../conn.php';
 
     $total = $conn->query("SELECT COUNT(*) as total FROM students")->fetch_assoc()['total'];
     $pending = $conn->query("SELECT COUNT(*) as pending FROM students WHERE approved = 0")->fetch_assoc()['pending'];
+    $approved = $conn->query("SELECT COUNT(*) as approved FROM students WHERE approved = 1")->fetch_assoc()['approved'];
+    $denied = $conn->query("SELECT COUNT(*) as denied FROM students WHERE approved IN (2, -1)")->fetch_assoc()['denied'];
     $approved_today = $conn->query("SELECT COUNT(*) as approved_today FROM students WHERE approved = 1 AND DATE(enrollment_date) = CURDATE()")->fetch_assoc()['approved_today'];
 
     if (!empty($search)) {
@@ -113,7 +123,7 @@ require_once __DIR__ . '/../conn.php';
       </form>
 
       <!-- Summary Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
           <div class="flex justify-between items-center">
             <div>
@@ -146,6 +156,18 @@ require_once __DIR__ . '/../conn.php';
             </div>
             <div class="bg-green-100 p-3 rounded-full">
               <i class="fas fa-check-circle text-green-700 text-xl"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-gray-500">Denied Applications</p>
+              <h3 class="text-2xl font-bold mt-1"><?php echo $denied; ?></h3>
+            </div>
+            <div class="bg-red-100 p-3 rounded-full">
+              <i class="fas fa-times-circle text-red-700 text-xl"></i>
             </div>
           </div>
         </div>
@@ -200,7 +222,7 @@ require_once __DIR__ . '/../conn.php';
       <!-- Report Card -->
       <td class="px-6 py-4 text-sm">
         <?php if (!empty($row['report_card_file'])): ?>
-          <a href="<?php echo htmlspecialchars($row['report_card_file']); ?>" target="_blank" class="text-[#2e6f40] hover:underline">View</a>
+          <a href="<?php echo htmlspecialchars(requirementDocumentLink($row['id'], 'report_card_file')); ?>" target="_blank" class="text-[#2e6f40] hover:underline">View</a>
         <?php else: ?>
           <span class="text-gray-400 italic">N/A</span>
         <?php endif; ?>
@@ -209,7 +231,7 @@ require_once __DIR__ . '/../conn.php';
       <!-- Birth Certificate -->
       <td class="px-6 py-4 text-sm">
         <?php if (!empty($row['birth_cert_file'])): ?>
-          <a href="<?php echo htmlspecialchars($row['birth_cert_file']); ?>" target="_blank" class="text-[#2e6f40] hover:underline">View</a>
+          <a href="<?php echo htmlspecialchars(requirementDocumentLink($row['id'], 'birth_cert_file')); ?>" target="_blank" class="text-[#2e6f40] hover:underline">View</a>
         <?php else: ?>
           <span class="text-gray-400 italic">N/A</span>
         <?php endif; ?>
@@ -218,7 +240,7 @@ require_once __DIR__ . '/../conn.php';
       <!-- Good Moral -->
       <td class="px-6 py-4 text-sm">
         <?php if (!empty($row['good_moral_file'])): ?>
-          <a href="<?php echo htmlspecialchars($row['good_moral_file']); ?>" target="_blank" class="text-[#2e6f40] hover:underline">View</a>
+          <a href="<?php echo htmlspecialchars(requirementDocumentLink($row['id'], 'good_moral_file')); ?>" target="_blank" class="text-[#2e6f40] hover:underline">View</a>
         <?php else: ?>
           <span class="text-gray-400 italic">N/A</span>
         <?php endif; ?>
@@ -227,7 +249,7 @@ require_once __DIR__ . '/../conn.php';
       <!-- NSO/PSA -->
       <td class="px-6 py-4 text-sm">
         <?php if (!empty($row['nso_psa_file'])): ?>
-          <a href="<?php echo htmlspecialchars($row['nso_psa_file']); ?>" target="_blank" class="text-[#2e6f40] hover:underline">View</a>
+          <a href="<?php echo htmlspecialchars(requirementDocumentLink($row['id'], 'nso_psa_file')); ?>" target="_blank" class="text-[#2e6f40] hover:underline">View</a>
         <?php else: ?>
           <span class="text-gray-400 italic">N/A</span>
         <?php endif; ?>
@@ -236,7 +258,7 @@ require_once __DIR__ . '/../conn.php';
       <!-- Formal Picture -->
       <td class="px-6 py-4 text-sm">
         <?php if (!empty($row['formal_picture_file'])): ?>
-          <a href="<?php echo htmlspecialchars($row['formal_picture_file']); ?>" target="_blank" class="text-[#2e6f40] hover:underline">View</a>
+          <a href="<?php echo htmlspecialchars(requirementDocumentLink($row['id'], 'formal_picture_file')); ?>" target="_blank" class="text-[#2e6f40] hover:underline">View</a>
         <?php else: ?>
           <span class="text-gray-400 italic">N/A</span>
         <?php endif; ?>
@@ -245,7 +267,7 @@ require_once __DIR__ . '/../conn.php';
       <!-- Diploma -->
       <td class="px-6 py-4 text-sm">
         <?php if (!empty($row['diploma_file'])): ?>
-          <a href="<?php echo htmlspecialchars($row['diploma_file']); ?>" target="_blank" class="text-[#2e6f40] hover:underline">View</a>
+          <a href="<?php echo htmlspecialchars(requirementDocumentLink($row['id'], 'diploma_file')); ?>" target="_blank" class="text-[#2e6f40] hover:underline">View</a>
         <?php else: ?>
           <span class="text-gray-400 italic">N/A</span>
         <?php endif; ?>
@@ -254,7 +276,7 @@ require_once __DIR__ . '/../conn.php';
       <!-- Form 137 -->
       <td class="px-6 py-4 text-sm">
         <?php if (!empty($row['form_137_file'])): ?>
-          <a href="<?php echo htmlspecialchars($row['form_137_file']); ?>" target="_blank" class="text-[#2e6f40] hover:underline">View</a>
+          <a href="<?php echo htmlspecialchars(requirementDocumentLink($row['id'], 'form_137_file')); ?>" target="_blank" class="text-[#2e6f40] hover:underline">View</a>
         <?php else: ?>
           <span class="text-gray-400 italic">N/A</span>
         <?php endif; ?>
@@ -262,8 +284,19 @@ require_once __DIR__ . '/../conn.php';
 
       <!-- Status -->
       <td class="px-6 py-4">
-        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <?php echo $row['approved'] ? 'status-approved' : 'status-pending'; ?>">
-          <?php echo $row['approved'] ? 'Approved' : 'Pending'; ?>
+        <?php
+          $statusClass = 'status-pending';
+          $statusText = 'Pending';
+          if ((int) $row['approved'] === 1) {
+              $statusClass = 'status-approved';
+              $statusText = 'Accepted';
+          } elseif ((int) $row['approved'] === 2 || (int) $row['approved'] === -1) {
+              $statusClass = 'status-denied';
+              $statusText = 'Denied';
+          }
+        ?>
+        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <?php echo $statusClass; ?>">
+          <?php echo $statusText; ?>
         </span>
       </td>
 
@@ -279,11 +312,14 @@ require_once __DIR__ . '/../conn.php';
             <i class="fas fa-trash"></i>
           </a>
           <!-- Approve -->
-          <?php if (!$row['approved']): ?>
+          <?php if ((int) $row['approved'] === 0): ?>
             <a href="approve_student.php?id=<?php echo $row['id']; ?>" class="action-btn bg-blue-100 text-blue-700 p-2 rounded-lg hover:bg-blue-200" title="Approve">
               <i class="fas fa-check"></i>
             </a>
-              <?php endif; ?>
+            <a href="deny_student.php?id=<?php echo $row['id']; ?>" class="action-btn bg-orange-100 text-orange-700 p-2 rounded-lg hover:bg-orange-200" onclick="return confirm('Deny this application?');" title="Deny">
+              <i class="fas fa-times"></i>
+            </a>
+          <?php endif; ?>
               </div>
               </td>
             </tr>
@@ -321,18 +357,19 @@ require_once __DIR__ . '/../conn.php';
   // Chart data from PHP
   const total = <?php echo $total; ?>;
   const pending = <?php echo $pending; ?>;
-  const approved = <?php echo $total - $pending; ?>;
+  const approved = <?php echo $approved; ?>;
+  const denied = <?php echo $denied; ?>;
 
   // Bar Chart
   const ctx1 = document.getElementById('barChart').getContext('2d');
   new Chart(ctx1, {
     type: 'bar',
     data: {
-      labels: ['Total Applicants', 'Approved', 'Pending'],
+      labels: ['Total Applicants', 'Accepted', 'Pending', 'Denied'],
       datasets: [{
         label: 'Number of Students',
-        data: [total, approved, pending],
-        backgroundColor: ['#2e6f40', '#16a34a', '#facc15'],
+        data: [total, approved, pending, denied],
+        backgroundColor: ['#2e6f40', '#16a34a', '#facc15', '#dc2626'],
         borderRadius: 8,
       }]
     },
@@ -353,10 +390,10 @@ require_once __DIR__ . '/../conn.php';
   new Chart(ctx2, {
     type: 'pie',
     data: {
-      labels: ['Approved', 'Pending'],
+      labels: ['Accepted', 'Pending', 'Denied'],
       datasets: [{
-        data: [approved, pending],
-        backgroundColor: ['#16a34a', '#facc15'],
+        data: [approved, pending, denied],
+        backgroundColor: ['#16a34a', '#facc15', '#dc2626'],
         borderColor: ['#ffffff'],
         borderWidth: 2
       }]

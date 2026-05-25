@@ -1,16 +1,16 @@
 <?php
 session_start();
-require_once __DIR__ . '/../conn.php';
+require_once __DIR__ . '/../includes/conn.php';
 
 $error = "";
 
-// Handle form submission via users table (role = 'admin')
+// Handle form submission via users table
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST['username'] ?? '';
+    $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
 
-    $stmt = $conn->prepare("SELECT password FROM users WHERE username = ? AND role = 'admin' LIMIT 1");
-    $stmt->bind_param("s", $username);
+    $stmt = $conn->prepare("SELECT password FROM users WHERE (username = ? OR email = ?) AND role = 'admin' LIMIT 1");
+    $stmt->bind_param("ss", $username, $username);
     $stmt->execute();
     $stmt->store_result();
 

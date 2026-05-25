@@ -4,13 +4,11 @@ require_once __DIR__ . '/../includes/conn.php';
 if (isset($_GET['id'])) {
     $id = intval($_GET['id']);
 
-    // Update the 'approved' status to 1 (approved)
-    $stmt = $conn->prepare("UPDATE students SET approved = 1 WHERE id = ?");
+    $stmt = $conn->prepare("UPDATE students SET approved = 2 WHERE id = ?");
     $stmt->bind_param("i", $id);
 
     if ($stmt->execute()) {
-        // Success: Redirect back to the dashboard
-        header("Location: dashboard.php?message=approved");
+        header("Location: dashboard.php?message=denied");
         exit;
     } else {
         echo "Error updating record: " . $stmt->error;

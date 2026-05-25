@@ -1,9 +1,18 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['username'])) {
+    header("Location: login.php");
+    exit();
+}
+
 // Save all previous POST values in hidden inputs
 $hidden_fields = '';
 foreach ($_POST as $key => $value) {
     $hidden_fields .= "<input type='hidden' name='" . htmlspecialchars($key) . "' value='" . htmlspecialchars($value) . "' />\n";
 }
+
+$userEmail = $_SESSION['email'] ?? '';
 ?>
 
 <!DOCTYPE html>
@@ -42,7 +51,7 @@ foreach ($_POST as $key => $value) {
         <!-- Email Field -->
         <div class="mb-6">
           <label class="block font-medium text-gray-700 mb-1">Email Address</label>
-          <input type="email" name="email" required class="block w-full border border-gray-300 rounded px-3 py-2 bg-white focus:ring-2 focus:ring-green-400 focus:outline-none">
+          <input type="email" name="email" value="<?= htmlspecialchars($userEmail) ?>" readonly required class="block w-full border border-gray-300 rounded px-3 py-2 bg-gray-100 text-gray-700 focus:ring-2 focus:ring-green-400 focus:outline-none">
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">

@@ -1,7 +1,7 @@
 <?php
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    require_once __DIR__ . '/../conn.php';
+    require_once __DIR__ . '/../includes/conn.php';
 
     $student_id = $_POST['student_id'];
     $full_name = $_POST['full_name'];

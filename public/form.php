@@ -1,3 +1,22 @@
+<?php
+require_once __DIR__ . '/../includes/conn.php';
+
+function generateStudentId($conn) {
+    do {
+        $studentId = (string) random_int(100000, 999999);
+        $stmt = $conn->prepare("SELECT id FROM students WHERE student_id = ? LIMIT 1");
+        $stmt->bind_param("s", $studentId);
+        $stmt->execute();
+        $stmt->store_result();
+        $exists = $stmt->num_rows > 0;
+        $stmt->close();
+    } while ($exists);
+
+    return $studentId;
+}
+
+$generatedStudentId = generateStudentId($conn);
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,7 +60,7 @@
 
           <div>
             <label class="block mb-1 font-medium text-gray-700">ID No.</label>
-            <input type="text" name="student_id" required class="w-full border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-green-400 focus:outline-none">
+            <input type="text" name="student_id" value="<?= htmlspecialchars($generatedStudentId) ?>" readonly required class="w-full border border-gray-300 rounded px-4 py-2 bg-gray-100 text-gray-700 focus:ring-2 focus:ring-green-400 focus:outline-none">
           </div>
 
           <div>

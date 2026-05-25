@@ -1,8 +1,34 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['username'])) {
+    header("Location: login.php");
+    exit();
+}
+
 // Database connection
-require_once __DIR__ . '/../conn.php';
+require_once __DIR__ . '/../includes/conn.php';
 if (!isset($conn) || $conn->connect_error) {
     die("Connection failed: " . ($conn->connect_error ?? 'unknown'));
+}
+
+function studentIdExists($conn, $studentId) {
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM students WHERE student_id = ?");
+    $stmt->bind_param("s", $studentId);
+    $stmt->execute();
+    $stmt->bind_result($count);
+    $stmt->fetch();
+    $stmt->close();
+
+    return $count > 0;
+}
+
+function generateUniqueStudentId($conn) {
+    do {
+        $studentId = (string) random_int(100000, 999999);
+    } while (studentIdExists($conn, $studentId));
+
+    return $studentId;
 }
 
 // Collect form data
@@ -17,7 +43,11 @@ $contact_no = $_POST['contact_no'] ?? '';
 $mothers_name = $_POST['mothers_name'] ?? '';
 $religion = $_POST['religion'] ?? '';
 $school_level = $_POST['year_level'] ?? '';
-$email = $_POST['email'] ?? '';
+$email = $_SESSION['email'] ?? ($_POST['email'] ?? '');
+
+if (!preg_match('/^\d{6}$/', $student_id)) {
+    $student_id = generateUniqueStudentId($conn);
+}
 
 // File upload handling: store in project-level uploads/ directory
 $upload_dir_fs = __DIR__ . '/../uploads/';
@@ -45,40 +75,8 @@ $formal_picture_path  = uploadFile('formal_picture', 'formal_picture');
 $diploma_path         = uploadFile('diploma', 'diploma');
 $form_137_path        = uploadFile('form_137', 'form_137');
 
-// Check for duplicate student_id
-$checkSql = "SELECT COUNT(*) FROM students WHERE student_id = ?";
-$checkStmt = $conn->prepare($checkSql);
-$checkStmt->bind_param("s", $student_id);
-$checkStmt->execute();
-$checkStmt->bind_result($count);
-$checkStmt->fetch();
-$checkStmt->close();
-
-if ($count > 0) {
-    echo "<!DOCTYPE html>
-    <html lang='en'>
-    <head>
-        <meta charset='UTF-8'>
-        <title>Enrollment Error</title>
-        <link rel='icon' href='../img/logo.png' type='image/png'>
-        <link rel='shortcut icon' href='../img/logo.png'>
-        <style>
-            body { font-family: Arial, sans-serif; background: #fff0f0; text-align: center; padding: 100px; }
-            .message-box { background: #ffffff; border: 2px solid red; padding: 30px; border-radius: 10px; display: inline-block; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-            h1 { color: red; }
-            .back-button { margin-top: 20px; padding: 10px 20px; background-color: rgb(198, 46, 46); color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; text-decoration: none; }
-            .back-button:hover { background-color:rgb(172, 41, 41); }
-        </style>
-    </head>
-    <body>
-        <div class='message-box'>
-            <h1>Duplicate Application ID!</h1>
-            <p>The student ID <strong>" . htmlspecialchars($student_id) . "</strong> already exists. Please use a different ID.</p>
-            <a href='apply.php' class='back-button'>Back to Application Page</a>
-        </div>
-    </body>
-    </html>";
-    exit;
+if (studentIdExists($conn, $student_id)) {
+    $student_id = generateUniqueStudentId($conn);
 }
 
 // SQL insert
@@ -135,6 +133,7 @@ $stmt->bind_param(
     <div class="message-box">
         <?php
         if ($stmt->execute()) {
+            $_SESSION['application_id'] = $student_id;
             echo "<h1>Thank you for your enrollment!</h1>";
             echo "<p>Your Application ID is: <strong>" . htmlspecialchars($student_id) . "</strong></p>";
         } else {

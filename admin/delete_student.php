@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../conn.php';
+require_once __DIR__ . '/../includes/conn.php';
 
 if (isset($_GET['id'])) {
     $id = intval($_GET['id']);
