@@ -1,0 +1,28 @@
+<?php
+session_start();
+require_once __DIR__ . '/conn.php';
+
+if (isset($_SESSION['username'])) {
+    $username = $_SESSION['username'];
+    $log_date = date('Y-m-d');
+    $time_out = date('H:i:s');
+
+    // Update logout time for today's login record
+    $stmt = $conn->prepare("
+        UPDATE user_log 
+        SET time_out = ?, status = 'Logged Out'
+        WHERE username = ? AND log_date = ?
+        ORDER BY id DESC LIMIT 1
+    ");
+    $stmt->bind_param("sss", $time_out, $username, $log_date);
+    $stmt->execute();
+    $stmt->close();
+}
+
+// Destroy session and redirect
+session_unset();
+session_destroy();
+header("Location: /bcst/public/login.php");
+exit;
+?>
+

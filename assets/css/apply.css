@@ -1,0 +1,144 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: #333;
+  background: #fff;
+}
+
+/* Header */
+.header {
+  background-color: #2e6f40;
+  color: #fff;
+  padding: 20px 40px; /* Increased padding */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 18px; /* Larger base font */
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Increased gap */
+}
+
+.logo {
+  width: 48px;  /* Larger logo */
+  height: 48px;
+}
+
+.input-id {
+  padding: 10px 15px; /* Bigger padding */
+  font-size: 16px; /* Bigger text */
+  border-radius: 6px;
+  border: none;
+  outline: none;
+}
+
+/* Main */
+.main {
+  max-width: 900px; /* slightly wider */
+  margin: 60px auto; /* more top/bottom spacing */
+  padding: 0 30px;
+  text-align: center;
+}
+
+.main-title {
+  font-size: 32px; /* bigger title */
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+.button-group {
+  margin-bottom: 30px;
+}
+
+.btn-primary,
+.btn-outline {
+  padding: 14px 28px; /* bigger buttons */
+  font-size: 16px;    /* larger font */
+  margin: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: #2e6f40;
+  color: white;
+  border: none;
+}
+
+.btn-outline {
+  border: 2px solid #2e6f40;
+  color: #2e6f40;
+  background: transparent;
+}
+
+.info-text {
+  font-size: 16px; /* larger info text */
+  margin-bottom: 40px;
+}
+
+/* Details */
+.details {
+  text-align: left;
+}
+
+details {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  padding: 15px;
+}
+
+summary {
+  font-size: 18px; /* bold & readable summary */
+  font-weight: bold;
+  cursor: pointer;
+}
+
+details div {
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+ul {
+  margin: 10px 0;
+  padding-left: 25px;
+  font-size: 16px;
+}
+
+
+/* Footer */
+.footer {
+  background-color: #2e6f40; /* Green tone */
+  color: #fff;
+  padding: 40px 20px; /* Increased padding */
+  font-family: sans-serif;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* slightly wider columns */
+  gap: 30px;
+  margin-bottom: 30px; /* space before the copyright */
+}
+
+.footer h3 {
+  font-size: 18px; /* Bigger title */
+  margin-bottom: 12px;
+  font-weight: bold;
+}
+
+.footer p {
+  margin: 6px 0;
+  font-size: 16px; /* Slightly larger */
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  padding-top: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #dcdcdc;
+}
