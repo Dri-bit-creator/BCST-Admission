@@ -1,0 +1,22 @@
+<?php
+// Database configuration for BCST application — local MySQL (XAMPP).
+// Supabase/Postgres integration disabled to ensure the app runs against
+// a local MySQL database on development machines.
+
+if (!defined('DB_USE_SUPABASE')) {
+    define('DB_USE_SUPABASE', false);
+}
+
+// Local MySQL defaults (can be overridden elsewhere if desired)
+if (!defined('DB_HOST')) {
+    define('DB_HOST', 'localhost');
+}
+if (!defined('DB_USER')) {
+    define('DB_USER', 'root');
+}
+if (!defined('DB_PASS')) {
+    define('DB_PASS', '');
+}
+if (!defined('DB_NAME')) {
+    define('DB_NAME', 'bcst_db');
+}

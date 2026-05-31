@@ -78,7 +78,7 @@ function requirementDocumentLink($studentId, $fileColumn) {
     $pending = $conn->query("SELECT COUNT(*) as pending FROM students WHERE approved = 0")->fetch_assoc()['pending'];
     $approved = $conn->query("SELECT COUNT(*) as approved FROM students WHERE approved = 1")->fetch_assoc()['approved'];
     $denied = $conn->query("SELECT COUNT(*) as denied FROM students WHERE approved IN (2, -1)")->fetch_assoc()['denied'];
-    $approved_today = $conn->query("SELECT COUNT(*) as approved_today FROM students WHERE approved = 1 AND DATE(enrollment_date) = CURDATE()")->fetch_assoc()['approved_today'];
+    $approved_today = $conn->query("SELECT COUNT(*) as approved_today FROM students WHERE approved = 1 AND CAST(enrollment_date AS date) = CURRENT_DATE")->fetch_assoc()['approved_today'];
 
     if (!empty($search)) {
         $result = $conn->query("SELECT * FROM students WHERE student_id LIKE '%$searchQuery%' ORDER BY id DESC");

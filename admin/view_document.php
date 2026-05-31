@@ -36,7 +36,7 @@ if ($studentId <= 0 || !in_array($fileColumn, $allowedFiles, true)) {
     exit('Invalid document request.');
 }
 
-$sql = "SELECT `$fileColumn` FROM students WHERE id = ? LIMIT 1";
+$sql = "SELECT " . $fileColumn . " FROM students WHERE id = ? LIMIT 1";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $studentId);
 $stmt->execute();

@@ -1,14 +1,4 @@
 <?php
-$servername = "localhost";
-$username = "root";      // default for XAMPP
-$password = "";          // default for XAMPP (no password)
-$dbname = "bcst_db";     // make sure this matches your database name
+// Keep a single connection implementation in conn.php
+require_once __DIR__ . '/conn.php';
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-?>
