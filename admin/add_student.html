@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Add Student</title>
+        <link rel="stylesheet" href="/bcst/assets/css/apply.css">
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-gray-50">
+        <div class="max-w-3xl mx-auto p-6 bg-white rounded shadow mt-12">
+            <h1 class="text-2xl font-bold mb-4">Add Student</h1>
+            <form id="addStudentForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Full Name</label>
+                    <input id="full_name" type="text" required class="mt-1 block w-full rounded border-gray-300 px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Email</label>
+                    <input id="email" type="email" required class="mt-1 block w-full rounded border-gray-300 px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">School Level</label>
+                    <input id="school_level" type="text" class="mt-1 block w-full rounded border-gray-300 px-3 py-2">
+                </div>
+                <div class="flex justify-end">
+                    <a href="dashboard.php" class="mr-2 px-4 py-2 bg-gray-200 rounded">Cancel</a>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Add Student</button>
+                </div>
+            </form>
+
+            <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+            <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+            <script src="firebase-config.js"></script>
+            <script>
+                const { db, generateUniqueStudentId } = window.fb || {};
+                document.getElementById('addStudentForm').addEventListener('submit', async (e)=>{
+                    e.preventDefault();
+                    const full_name = document.getElementById('full_name').value.trim();
+                    const email = document.getElementById('email').value.trim();
+                    const school_level = document.getElementById('school_level').value.trim();
+                    const student_id = await generateUniqueStudentId();
+                    await db.collection('students').add({ student_id, full_name, email, school_level, approved:0, created_at: firebase.firestore.FieldValue.serverTimestamp(), enrollment_date: new Date().toISOString() });
+                    window.location.href = 'dashboard.php';
+                });
+            </script>
+        </div>
+    </body>
+</html>

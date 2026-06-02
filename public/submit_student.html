@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Enrollment Confirmation</title>
+        <link rel="stylesheet" href="/bcst/assets/css/apply.css">
+        <style>body{font-family:Arial, sans-serif; background:rgb(251,251,251); text-align:center; padding:100px}</style>
+    </head>
+    <body>
+        <div class="message-box" style="background:#fff;border:2px solid #008000;padding:30px;border-radius:10px;display:inline-block;box-shadow:0 0 10px rgba(0,0,0,.1);">
+            <h1 id="title">Thank you for your enrollment!</h1>
+            <p id="message">Your application was submitted.</p>
+            <div class="redirect-note" style="margin-top:20px;">
+                <a id="back" href="apply.php" style="display:inline-block;margin-top:20px;padding:10px 20px;background:#0741ee;color:#fff;border-radius:5px;text-decoration:none;">Back to Application Page</a>
+            </div>
+        </div>
+
+        <!-- Firebase SDKs -->
+        <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+        <script src="firebase-config.js"></script>
+
+        <script>
+            const { db } = window.fb || {};
+
+            function q(name) { return new URLSearchParams(location.search).get(name); }
+
+            async function init() {
+                const sid = q('student_id');
+                if (!sid) return;
+                if (!db) return console.error('Firebase not initialized');
+
+                try {
+                    const snap = await db.collection('students').where('student_id','==', sid).limit(1).get();
+                    if (snap.empty) {
+                        document.getElementById('title').textContent = 'Application not found';
+                        document.getElementById('message').textContent = 'No application matches the provided ID.';
+                        return;
+                    }
+                    const doc = snap.docs[0].data();
+                    document.getElementById('message').innerHTML = `Your Application ID is: <strong>${sid}</strong><br>Status: <strong>${statusText(doc.approved)}</strong>`;
+                } catch (err) {
+                    console.error(err);
+                    document.getElementById('message').textContent = 'Unable to retrieve application details.';
+                }
+            }
+
+            function statusText(v) {
+                if ((v === 1) || (v === '1')) return 'Accepted';
+                if ((v === 2) || (v === -1) || (v === '2') || (v === '-1')) return 'Denied';
+                return 'Pending admin confirmation';
+            }
+
+            document.addEventListener('DOMContentLoaded', init);
+        </script>
+    </body>
+</html>

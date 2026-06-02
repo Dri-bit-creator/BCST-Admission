@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Document Viewer</title>
+    <link rel="stylesheet" href="/bcst/assets/css/apply.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-50">
+    <div class="max-w-6xl mx-auto p-4">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h1 id="docTitle" class="text-xl font-bold">Document</h1>
+          <p id="docName" class="text-sm text-gray-600"></p>
+        </div>
+        <div class="flex gap-2">
+          <a id="openNew" class="px-4 py-2 bg-green-600 text-white rounded">Open in new tab</a>
+          <a href="dashboard.php" class="px-4 py-2 bg-gray-200 rounded">Back</a>
+        </div>
+      </div>
+
+      <div id="viewer" class="bg-white rounded border p-4 min-h-[60vh]"></div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script>
+      (async function(){
+        const allowed = ['report_card_file','birth_cert_file','good_moral_file','nso_psa_file','formal_picture_file','diploma_file','form_137_file'];
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+        const file = params.get('file');
+        if (!id || !file || !allowed.includes(file)) return document.getElementById('viewer').textContent = 'Invalid request.';
+
+        const doc = await window.fb.db.collection('students').doc(id).get();
+        if (!doc.exists) return document.getElementById('viewer').textContent = 'Student not found.';
+        const data = doc.data();
+        const url = data[file];
+        if (!url) return document.getElementById('viewer').textContent = 'No document uploaded.';
+
+        document.getElementById('docTitle').textContent = file.replace(/_/g,' ').replace(/file$/,'').trim();
+        const name = url.split('?')[0].split('/').pop();
+        document.getElementById('docName').textContent = name;
+        document.getElementById('openNew').href = url; document.getElementById('openNew').target = '_blank';
+
+        const viewer = document.getElementById('viewer');
+        // simple mime guess
+        const ext = name.split('.').pop().toLowerCase();
+        if (['png','jpg','jpeg','gif','webp'].includes(ext)) {
+          const img = document.createElement('img'); img.src = url; img.className='mx-auto max-h-[80vh]'; viewer.appendChild(img);
+        } else if (ext === 'pdf') {
+          const iframe = document.createElement('iframe'); iframe.src = url; iframe.style.width='100%'; iframe.style.height='80vh'; viewer.appendChild(iframe);
+        } else {
+          const a = document.createElement('a'); a.href = url; a.target='_blank'; a.textContent = 'Open document in new tab'; a.className='text-blue-600'; viewer.appendChild(a);
+        }
+      })();
+    </script>
+  </body>
+</html>

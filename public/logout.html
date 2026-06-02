@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Logging out...</title>
+    </head>
+    <body>
+        <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+        <script src="firebase-config.js"></script>
+        <script>
+            (async function(){
+                const { auth } = window.fb || {};
+                if (auth) {
+                    try { await auth.signOut(); } catch(e){}
+                }
+                window.location.href = 'index.php';
+            })();
+        </script>
+    </body>
+</html>

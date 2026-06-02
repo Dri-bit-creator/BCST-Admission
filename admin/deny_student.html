@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Denying...</title>
+        <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+        <script src="firebase-config.js"></script>
+    </head>
+    <body>
+        <script>
+            (async function(){
+                const params = new URLSearchParams(window.location.search);
+                const id = params.get('id');
+                if (!id) return window.location.href='dashboard.php';
+                await window.fb.db.collection('students').doc(id).update({ approved: 2 });
+                window.location.href='dashboard.php?message=denied';
+            })();
+        </script>
+    </body>
+</html>

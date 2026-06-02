@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Admin Login | BCST</title>
+    <link rel="stylesheet" href="/bcst/assets/css/apply.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#2e6f40;min-height:100vh;display:grid;place-items:center;padding:24px}</style>
+  </head>
+  <body>
+    <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-8">
+      <div class="flex justify-center mb-6"><img src="../img/logo.png" alt="BCST Logo" class="w-20 h-20 object-contain rounded-full border border-gray-200 shadow-sm"></div>
+      <h2 class="text-2xl font-bold text-center text-green-700 mb-2">Admin Portal</h2>
+      <p class="text-center text-gray-500 mb-6">Sign in with your admin credentials (Firebase Auth)</p>
+
+      <!-- Firebase SDKs -->
+      <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+      <script src="firebase-config.js"></script>
+
+      <form id="adminLogin" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Email</label>
+          <input id="email" type="email" required class="mt-1 block w-full rounded-md border-gray-300 px-3 py-2">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Password</label>
+          <input id="password" type="password" required class="mt-1 block w-full rounded-md border-gray-300 px-3 py-2">
+        </div>
+        <button type="submit" class="w-full bg-green-600 text-white py-2 rounded-md font-semibold">Login</button>
+      </form>
+      <p id="error" class="text-sm text-red-600 mt-3 hidden"></p>
+
+      <script>
+        const { auth, db } = window.fb || {};
+        document.getElementById('adminLogin').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const email = document.getElementById('email').value.trim();
+          const password = document.getElementById('password').value;
+          const errEl = document.getElementById('error');
+          try {
+            const cred = await auth.signInWithEmailAndPassword(email, password);
+            const uid = cred.user.uid;
+            const userDoc = await db.collection('users').doc(uid).get();
+            if (!userDoc.exists || userDoc.data().role !== 'admin') {
+              errEl.classList.remove('hidden'); errEl.textContent = 'Not an admin account.';
+              await auth.signOut();
+              return;
+            }
+            window.location.href = 'dashboard.php';
+          } catch (err) {
+            errEl.classList.remove('hidden'); errEl.textContent = err.message || 'Login failed';
+          }
+        });
+      </script>
+    </div>
+  </body>
+</html>

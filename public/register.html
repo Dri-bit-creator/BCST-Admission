@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Register | BCST Admission</title>
+    <link rel="stylesheet" href="/bcst/assets/css/apply.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:0;min-height:100vh;display:grid;place-items:center;padding:32px;background:#f4f8f5}</style>
+  </head>
+  <body>
+    <div class="w-full max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 bg-white border rounded-lg shadow-lg overflow-hidden">
+      <div class="p-8 bg-green-700 text-white flex flex-col justify-center">
+        <img src="../img/logo.png" alt="logo" class="w-24 h-24 rounded-full bg-white p-2 mb-6">
+        <h1 class="text-3xl font-bold">Bohol College of Science and Technology</h1>
+        <p class="mt-4 text-white/80">Create an account to manage your application.</p>
+      </div>
+
+      <div class="p-8">
+        <h2 class="text-2xl font-bold mb-2 text-green-700">Create Account</h2>
+        <p class="text-sm text-gray-600 mb-6">Already have an account? <a href="index.php" class="text-green-600 font-semibold">Sign in</a>.</p>
+
+        <!-- Firebase SDKs -->
+        <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+        <script src="firebase-config.js"></script>
+
+        <form id="registerForm" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Username</label>
+            <input id="username" type="text" required class="mt-1 block w-full rounded-md border-gray-300 px-3 py-2">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Email</label>
+            <input id="email" type="email" required class="mt-1 block w-full rounded-md border-gray-300 px-3 py-2">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Password</label>
+            <input id="password" type="password" required class="mt-1 block w-full rounded-md border-gray-300 px-3 py-2">
+          </div>
+
+          <button type="submit" class="mt-6 w-full bg-green-600 text-white py-2 rounded-md font-semibold">Create Account</button>
+        </form>
+
+        <p id="error" class="text-sm text-red-600 mt-3 hidden"></p>
+      </div>
+    </div>
+
+    <script>
+      const { auth, db } = window.fb || {};
+
+      document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('username').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const errEl = document.getElementById('error');
+        try {
+          const userCred = await auth.createUserWithEmailAndPassword(email, password);
+          const uid = userCred.user.uid;
+          await db.collection('users').doc(uid).set({ username, email, role: 'user', created_at: firebase.firestore.FieldValue.serverTimestamp() });
+          window.location.href = 'apply.php';
+        } catch (err) {
+          errEl.classList.remove('hidden');
+          errEl.textContent = err.message || 'Registration failed';
+        }
+      });
+    </script>
+  </body>
+</html>
+        </form>
+
+        <p class="helper">
+          Already registered? <a href="index.php">Login here</a>
+        </p>
+      </div>
+    </section>
+
+    <section class="identity-panel" aria-label="BCST identity">
+      <div>
+        <div class="logo-block">
+          <img src="../img/logo.png" alt="BCST Logo">
+          <h2>Bohol College of Science and Technology</h2>
+          <p>Create your account to start your application, upload requirements, and track admin confirmation.</p>
+        </div>
+
+        <div class="steps">
+          <div class="step"><span class="step-number">1</span><span>Create your account</span></div>
+          <div class="step"><span class="step-number">2</span><span>Submit your application</span></div>
+          <div class="step"><span class="step-number">3</span><span>Track your status</span></div>
+        </div>
+      </div>
+
+      <div class="identity-footer">&copy; <span id="current-year"></span> BCST. All rights reserved.</div>
+    </section>
+  </main>
+  <script>
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
